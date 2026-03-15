@@ -21,7 +21,7 @@ public partial class ListaProduto : ContentPage
     {
         try
         {
-            lista.Clear(); // LIMPA A LISTA PARA NÃO DUPLICAR
+            lista.Clear(); 
 
             List<Produto> tmp = await App.Db.GetAll();
 
