@@ -35,6 +35,7 @@ public partial class NovoProduto : ContentPage
 
             // Mostra uma mensagem informando que o registro foi salvo
             await DisplayAlert("Sucesso!", "Registro Inserido", "OK");
+            await Navigation.PopAsync();
 
         }
         catch (Exception ex)
