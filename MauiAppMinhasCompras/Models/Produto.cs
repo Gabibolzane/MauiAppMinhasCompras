@@ -17,6 +17,7 @@ namespace MauiAppMinhasCompras.Models
 
         // Propriedade que armazena o preço do produto
         public double Preco { get; set; }
+        public double Total { get => Quantidade * Preco; }
 
         public Produto() { }
     }

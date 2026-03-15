@@ -51,7 +51,7 @@ namespace MauiAppMinhasCompras.helpers
         //responsável por pesquisar produtos
         public Task<List<Produto>> Seanch(string q)
         {
-            string sql = "SELECT * Produto WHERE descricao like '%" + q + "%'";
+            string sql = "SELECT * FROM Produto WHERE descricao like '%" + q + "%'";
 
             //retorna os resultados encontrados
             return _conn.QueryAsync<Produto>(sql);
