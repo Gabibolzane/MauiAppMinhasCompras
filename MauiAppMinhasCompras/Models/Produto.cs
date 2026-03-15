@@ -4,6 +4,7 @@ namespace MauiAppMinhasCompras.Models
 {
     public class Produto
     {
+        internal static object anexado;
 
         // Mostra este campo é a chave primária da tabela
         [PrimaryKey, AutoIncrement]
