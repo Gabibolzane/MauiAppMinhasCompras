@@ -13,38 +13,27 @@ public partial class ListaProduto : ContentPage
     {
         InitializeComponent();
 
-        // Liga a lista ao ListView/CollectionView
+        
         lst_produtos.ItemsSource = lista;
     }
 
-    // Executa sempre que a página aparece
     protected override async void OnAppearing()
     {
-        try
-        {
+        
             lista.Clear(); // LIMPA A LISTA PARA NÃO DUPLICAR
 
             List<Produto> tmp = await App.Db.GetAll();
 
             tmp.ForEach(i => lista.Add(i));
-        }
-        catch (Exception ex)
-        {
-            await DisplayAlert("Erro", ex.Message, "OK");
-        }
+       
     }
 
-    // Botão ADICIONAR (abre tela NovoProduto)
+    // Botão ADICIONAR
     private void ToolbarItem_Clicked(object sender, EventArgs e)
     {
-        try
-        {
+      
             Navigation.PushAsync(new Views.NovoProduto());
-        }
-        catch (Exception ex)
-        {
-            DisplayAlert("Ops", ex.Message, "OK");
-        }
+        
     }
 
     // Busca de produtos
@@ -62,18 +51,13 @@ public partial class ListaProduto : ContentPage
     // Botão SOMAR
     private async void ToolbarItem_Clicked_1(object sender, EventArgs e)
     {
-        try
-        {
+        
             double soma = lista.Sum(i => i.Total);
 
             string msg = $"O total é {soma:C}";
 
             await DisplayAlert("Total de Produtos", msg, "OK");
-        }
-        catch (Exception ex)
-        {
-            await DisplayAlert("Erro", ex.Message, "OK");
-        }
+        
     }
 
     private void MenuItem_Clicked(object sender, EventArgs e)
