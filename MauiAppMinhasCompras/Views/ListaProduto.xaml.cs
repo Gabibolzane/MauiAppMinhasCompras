@@ -48,22 +48,15 @@ public partial class ListaProduto : ContentPage
     }
 
     // Busca de produtos
-    private async void txt_search_TextChanged(object sender, TextChangedEventArgs e) 
+    private async void txt_search_TextChanged(object sender, TextChangedEventArgs e) //TextChanged, SearchBar
     {
-        try
-        {
-            string q = e.NewTextValue; 
+            string q = e.NewTextValue; //Filtrar dados
 
-            lista.Clear(); 
+            lista.Clear(); //ObservableCollection
 
-            List<Produto> tmp = await App.Db.Seanch(q); 
+            List<Produto> tmp = await App.Db.Seanch(q); //Filtrar dados
 
-            tmp.ForEach(i => lista.Add(i));
-        }
-        catch (Exception ex)
-        {
-            await DisplayAlert("Erro", ex.Message, "OK");
-        }
+            tmp.ForEach(i => lista.Add(i));//ObservableCollection
     }
 
     // Botão SOMAR
