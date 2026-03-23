@@ -10,13 +10,15 @@
         <!-- Botão chamado "Adicionar" que executa um evento quando clicado -->
         <ToolbarItem Text="Adicionar" Clicked="ToolbarItem_Clicked"/>
     </ContentPage.ToolbarItems>
-    
+    <!-- Layout vertical (organiza os elementos um abaixo do outro) -->
     <VerticalStackLayout>
+        <!-- Barra de pesquisa -->
         <SearchBar x:Name="txt_search" 
                    Placeholder="Busca de Produtos"
                    TextChanged="txt_search_TextChanged"/>
         <ListView x:Name="lst_produtos" ItemSelected="lst_produtos_ItemSelected">
             <ListView.Header>
+                <!-- Grid para organizar os títulos em colunas -->
                 <Grid ColumnDefinitions="*, *, *, *, *">
                     <Label Grid.Column="0" Text="Id"/>
                     <Label Grid.Column="1" Text="Descricao"/>
@@ -29,6 +31,7 @@
                 <DataTemplate>
                     <ViewCell>
                         <ViewCell.ContextActions>
+                            <!-- Botão "Remover" dentro do item -->
                             <MenuItem Text="Remover" Clicked="MenuItem_Clicked"/>
                         </ViewCell.ContextActions>
                         <Grid ColumnDefinitions="*, *, *, *, *">

@@ -76,6 +76,7 @@ public partial class ListaProduto : ContentPage
         
     }
 
+    // REMOVER PRODUTO
     private async void MenuItem_Clicked(object sender, EventArgs e)
     {
         try {
@@ -96,6 +97,7 @@ public partial class ListaProduto : ContentPage
         }
     }
 
+    // SELECIONAR ITEM DA LISTA (EDITAR)
     private async void lst_produtos_ItemSelected(object sender, SelectedItemChangedEventArgs e)
     {
         try {

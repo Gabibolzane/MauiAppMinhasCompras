@@ -12,15 +12,17 @@ namespace MauiAppMinhasCompras.Models
         public int Id { get; set; }
 
         // Propriedade que armazena a descrição do produto
-        public string Descricao {
-            get => _descricao; 
+        public string Descricao
+        {
+            get => _descricao;
             set
             {
-                if(value == null)
+                if (value == null)
                 {
                     throw new Exception("Por favor, preencha a descrição");
-                    _descricao = value;
                 }
+
+                _descricao = value;
             }
         }
 
