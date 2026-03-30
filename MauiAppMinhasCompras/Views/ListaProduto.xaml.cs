@@ -1,117 +1,164 @@
-using MauiAppMinhasCompras.Models;
+using System.Collections.ObjectModel;
+using MauiAppMinhasCompras.Helper;
+using MauiAppMinhasCompras.Model;
 using System.Collections.ObjectModel;
 
 namespace MauiAppMinhasCompras.Views;
 
 public partial class ListaProduto : ContentPage
 {
-    // Lista que será exibida na tela
     ObservableCollection<Produto> lista = new ObservableCollection<Produto>();
 
-    // Construtor da página
+
     public ListaProduto()
     {
         InitializeComponent();
 
-        
         lst_produtos.ItemsSource = lista;
     }
+    private async void ToolbarItem_Clicked_2(object sender, EventArgs e)
+    {
+        var grupos = lista
+            .GroupBy(p => p.Categoria)
+            .Select(g => new
+            {
+                Categoria = g.Key,
+                Total = g.Sum(p => p.Total)
+            });
 
-    protected override async void OnAppearing()
+        string msg = "";
+
+        foreach (var item in grupos)
+        {
+            msg += $"{item.Categoria}: {item.Total:C}\n";
+        }
+
+        await DisplayAlert("Relatório por Categoria", msg, "OK");
+    }
+
+    protected async override void OnAppearing()
     {
         try
         {
-            lista.Clear(); 
+            List<Produto> tmp = await App.Db.GetAll(); // busca todos os produtos do banco
+
+            tmp.ForEach(i => lista.Add(i)); // adiciona na lista (mostra na tela)
+        }
+        catch (Exception ex)
+        {
+            await DisplayAlert("ops", ex.Message, "OK");
+        }
+    }
+
+    // botão de adicionar produto
+    private void ToolbarItem_Clicked(object sender, EventArgs e)
+    {
+        try
+        {
+            Navigation.PushAsync(new Views.NovoProduto());  // abre tela de cadastro
+
+        }
+        catch (Exception ex)
+        {
+            DisplayAlert("Erro", ex.Message, "OK"); // mostra uma mensagem "Erro" se acontecer
+        }
+    }
+
+    // busca dinâmica (quando digita no SearchBar)
+    private async void txt_search_TextChanged(object sender, TextChangedEventArgs e)
+    {
+        try
+        {
+            string q = e.NewTextValue; // texto digitado
+
+            lst_produtos.IsRefreshing = true;
+
+            lista.Clear(); // limpa a lista atual
+
+            List<Produto> tmp = await App.Db.Search(q);  // busca no banco
+
+            tmp.ForEach(i => lista.Add(i)); // mostra resultados
+        }
+        catch (Exception ex)
+        {
+            await DisplayAlert("Erro", ex.Message, "OK"); // mostra uma mensagem "Erro" se acontecer
+        }
+        finally
+        {
+            lst_produtos.IsRefreshing = false;
+        }
+
+    }
+
+    // botão que calcula o total
+    private void ToolbarItem_Clicked_1(object sender, EventArgs e)
+    {
+        double soma = lista.Sum(i => i.Total);  // soma todos os totais
+
+        string msg = $"O total é {soma:C}"; // formata como dinheiro
+
+        DisplayAlert("Total dos Produtos", msg, "OK");
+
+    }
+
+    private async void MenuItem_Clicked(object sender, EventArgs e)
+    {
+
+        try
+        {
+            MenuItem selecionado = sender as MenuItem; /// pega o produto selecionado (clicado)
+
+            Produto p = selecionado.BindingContext as Produto; // pega o produto associado ao item do menu (o produto que foi clicado)
+
+            bool confirm = await DisplayAlert(
+                "Tem certeza?", $"Remover {p.Descricao}?", "Sim", "Não");
+            if (confirm)
+            {
+                await App.Db.Delete(p.Id); // remove do banco
+                lista.Remove(p); // remove da lista (tela)
+            }
+        }
+        catch (Exception ex)
+        {
+            await DisplayAlert("Erro", ex.Message, "OK");
+        }
+
+    }
+
+    private void lst_produtos_ItemSelected(object sender, SelectedItemChangedEventArgs e)
+    {
+        try
+        {
+            Produto p = e.SelectedItem as Produto; // pega o produto selecionado
+
+            Navigation.PushAsync(new Views.EditarProduto // abre a tela de edição passando o produto
+            {
+                BindingContext = p, // mostra os dados do produto na tela de edição
+            });
+        }
+        catch (Exception ex)
+        {
+            DisplayAlert("Erro", ex.Message, "OK");
+        }
+    }
+
+    private async void lst_produtos_Refreshing(object sender, EventArgs e)
+    {
+        try
+        {
+            lista.Clear(); // limpa a lista atual
 
             List<Produto> tmp = await App.Db.GetAll();
 
-            tmp.ForEach(i => lista.Add(i));
-
-        } catch(Exception ex)
+            tmp.ForEach(i => lista.Add(i)); // mostra resultados
+        }
+        catch (Exception ex)
         {
-           await DisplayAlert("Ops", ex.Message, "OK");
+            await DisplayAlert("Erro", ex.Message, "OK"); // mostra uma mensagem "Erro" se acontecer
         }
-       
-    }
-
-    // Botão ADICIONAR
-    private void ToolbarItem_Clicked(object sender, EventArgs e)
-    {
-      
-            Navigation.PushAsync(new Views.NovoProduto());
-        
-    }
-
-    // Busca de produtos
-    private async void txt_search_TextChanged(object sender, TextChangedEventArgs e) //TextChanged, SearchBar
-    {
-        try { 
-            string q = e.NewTextValue; //Filtrar dados
-
-            lista.Clear(); //ObservableCollection
-
-            List<Produto> tmp = await App.Db.Seanch(q); //Filtrar dados
-
-            tmp.ForEach(i => lista.Add(i));//ObservableCollection
-        } catch(Exception ex)
+        finally
         {
-           await DisplayAlert("Ops", ex.Message, "OK");
-}
-    }
-
-    // Botão SOMAR
-    private async void ToolbarItem_Clicked_1(object sender, EventArgs e)
-    {
-        try { 
-            double soma = lista.Sum(i => i.Total);
-
-            string msg = $"O total é {soma:C}";
-
-            await DisplayAlert("Total de Produtos", msg, "OK");
-
-        } 
-        catch(Exception ex){
-           await DisplayAlert("Ops", ex.Message, "OK");
+            lst_produtos.IsRefreshing = false;
         }
-        
-    }
-
-    // REMOVER PRODUTO
-    private async void MenuItem_Clicked(object sender, EventArgs e)
-    {
-        try {
-            MenuItem selecionado = sender as MenuItem;
-
-            Produto p = selecionado.BindingContext as Produto;
-
-            bool confirm = await DisplayAlert("Confirma?", $"Remover {p.Descricao}?", "Sim", "Não");
-            if (confirm)
-            {
-                await App.Db.Delete(p.Id);
-                lista.Remove(p);
-            }
-
-        }
-        catch(Exception ex){
-           await DisplayAlert("Ops", ex.Message, "OK");
-        }
-    }
-
-    // SELECIONAR ITEM DA LISTA (EDITAR)
-    private async void lst_produtos_ItemSelected(object sender, SelectedItemChangedEventArgs e)
-    {
-        try {
-            Produto p = e.SelectedItem as Produto;
-
-            Navigation.PushAsync(new Views.EditarProduto
-                {
-            BindingContext = p,
-            });
-
-        } 
-        catch(Exception ex){
-           await DisplayAlert("Ops", ex.Message, "OK");
-        }
-
     }
 }

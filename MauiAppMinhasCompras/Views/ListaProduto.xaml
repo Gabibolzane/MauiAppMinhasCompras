@@ -2,48 +2,74 @@
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="MauiAppMinhasCompras.Views.ListaProduto"
-             Title="ListaProduto">
-    <!-- Barra que aparece no topo da página -->
+             Title="Minhas Compras">
+
     <ContentPage.ToolbarItems>
-        <!-- Botão na barra superior chamado "Somar" -->
         <ToolbarItem Text="Somar" Clicked="ToolbarItem_Clicked_1"/>
-        <!-- Botão chamado "Adicionar" que executa um evento quando clicado -->
         <ToolbarItem Text="Adicionar" Clicked="ToolbarItem_Clicked"/>
+        <ToolbarItem Text="Relatório" Clicked="ToolbarItem_Clicked_2">
+        </ToolbarItem>
     </ContentPage.ToolbarItems>
-    <!-- Layout vertical (organiza os elementos um abaixo do outro) -->
+
+    <ContentPage.Resources>
+        <ResourceDictionary>
+            <Style TargetType="Label">
+                <Setter Property="VerticalTextAlignment" Value="Center"></Setter>
+            </Style>
+        </ResourceDictionary>
+    </ContentPage.Resources>
+
     <VerticalStackLayout>
-        <!-- Barra de pesquisa -->
-        <SearchBar x:Name="txt_search" 
-                   Placeholder="Busca de Produtos"
-                   TextChanged="txt_search_TextChanged"/>
-        <ListView x:Name="lst_produtos" ItemSelected="lst_produtos_ItemSelected">
+
+        <!-- Barra de busca -->
+        <SearchBar x:Name="txt_search"
+                   Placeholder="Busca por Produtos"
+                   TextChanged="txt_search_TextChanged" />
+
+
+        <!-- lista de produtos -->
+        <ListView x:Name="lst_produtos" 
+                  IsPullToRefreshEnabled="True"
+                  Refreshing="lst_produtos_Refreshing"
+                  ItemSelected="lst_produtos_ItemSelected" >
+
+            <!-- cabeçalho da lista -->
             <ListView.Header>
-                <!-- Grid para organizar os títulos em colunas -->
-                <Grid ColumnDefinitions="*, *, *, *, *">
-                    <Label Grid.Column="0" Text="Id"/>
-                    <Label Grid.Column="1" Text="Descricao"/>
-                    <Label Grid.Column="2" Text="Preco"/>
-                    <Label Grid.Column="3" Text="Quantidade"/>
-                    <Label Grid.Column="4" Text="Total"/>
+
+                <!-- grid com 5 colunas -->
+                <Grid ColumnDefinitions="*, *, *, *, *,*"
+                    BackgroundColor="DarkBlue" >
+                    <Label Grid.Column="0" Text="ID" FontAttributes="Bold"/>
+                    <Label Grid.Column="1" Text="Categoria" FontAttributes="Bold"/>
+                    <Label Grid.Column="2" Text="Descrição" FontAttributes="Bold"/>
+                    <Label Grid.Column="3" Text="Preço" FontAttributes="Bold"/>
+                    <Label Grid.Column="4" Text="Quantidade" FontAttributes="Bold"/>
+                    <Label Grid.Column="5" Text="Total" FontAttributes="Bold"/>
                 </Grid>
             </ListView.Header>
+
+            <!-- template de cada item -->
             <ListView.ItemTemplate>
                 <DataTemplate>
                     <ViewCell>
                         <ViewCell.ContextActions>
-                            <!-- Botão "Remover" dentro do item -->
-                            <MenuItem Text="Remover" Clicked="MenuItem_Clicked"/>
+                            <MenuItem Text="Excluir" Clicked="MenuItem_Clicked"/>
                         </ViewCell.ContextActions>
-                        <Grid ColumnDefinitions="*, *, *, *, *">
-                            <Label Grid.Column="0" Text="{Binding Id}"/>
-                            <Label Grid.Column="1" Text="{Binding Descricao}"/>
-                            <Label Grid.Column="2" Text="{Binding Preco}"/>
-                            <Label Grid.Column="3" Text="{Binding Quantidade}"/>
-                            <Label Grid.Column="4" Text="{Binding Total}"/>
+
+                        <!-- layout de cada linha -->
+                        <Grid ColumnDefinitions="*, *, *, *, *,*"
+                            BackgroundColor="LightSteelBlue">
+                            <Label Grid.Column="0" Text="{Binding Id}"  TextColor="Black"/>
+                            <Label Grid.Column="1" Text="{Binding Categoria}" TextColor="Black"/>
+                            <Label Grid.Column="2" Text="{Binding Descricao}" TextColor="Black"/>
+                            <Label Grid.Column="3" Text="{Binding Preco, StringFormat='{}{0:c}'}"  TextColor="Black"/>
+                            <Label Grid.Column="4" Text="{Binding Quantidade}"  TextColor="Black"/>
+                            <Label Grid.Column="5" Text="{Binding Total, StringFormat='{}{0:c}'}"  TextColor="Black"/>
                         </Grid>
                     </ViewCell>
                 </DataTemplate>
             </ListView.ItemTemplate>
         </ListView>
+
     </VerticalStackLayout>
 </ContentPage>
